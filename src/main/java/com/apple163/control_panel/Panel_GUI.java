@@ -13,21 +13,20 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Panel_GUI extends Application {
-    double width = Screen.getPrimary().getBounds().getWidth();
-    double height = Screen.getPrimary().getBounds().getHeight();
+    private final double width = Screen.getPrimary().getBounds().getWidth();
+    private final double height = Screen.getPrimary().getBounds().getHeight();
     ScrollPane root = new ScrollPane();
     Pane pane = new Pane();
-    public double cpuUsage = 0.0;
-    public double ramUsage = 0.0;
-    public double diskUsage = 0.0;
     public String statusValueString = "Offline";
     public String ipValueString;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -55,11 +54,12 @@ public class Panel_GUI extends Application {
         Button fileManager = new Button();
         Button copyIP = new Button();
         Scene scene = new Scene(root, width/2, height/2);
-
-                                                                                            ipValueString = "123.232.23.123:1234"; //Placeholder
-                                                                                            cpuUsage = 0.0; //Placeholder
-                                                                                            ramUsage = 0.0; //Placeholder
-                                                                                            diskUsage = 0.0; //Placeholder
+        Rectangle rectangle1 = new Rectangle(0, 0, width, height);
+        Rectangle rectangle2 = new Rectangle(0, 0, width, height);
+        Rectangle rectangle3 = new Rectangle(0, 0, width, height);
+        Rectangle rectangle4 = new Rectangle(0, 0, width, height);
+        ResourceUsage.startUpdate();
+                                                                                            ipValueString = "192.168.1.1:25565"; //Placeholder
                                                                                             statusValueString = "Offline"; //Placeholder
 // Styling
         //SCENE WIDTH AND HEIGHT -> 768, 432
@@ -94,19 +94,19 @@ public class Panel_GUI extends Application {
         cpu.setText("CPU USAGE:");
         cpuValue.setFill(Color.BLACK);
         cpuValue.setFont(Font.font("UNISPACE", 14));
-        cpuValue.setText(cpuUsage + "%");
+        cpuValue.textProperty().bind(ResourceUsage.cpuUsage.concat("%"));
         ram.setFill(Color.BLACK);
         ram.setFont(Font.font("UNISPACE", 14));
         ram.setText("RAM USAGE:");
         ramValue.setFill(Color.BLACK);
         ramValue.setFont(Font.font("UNISPACE", 14));
-        ramValue.setText(ramUsage + "%");
+        ramValue.textProperty().bind(ResourceUsage.ramUsed.concat("/").concat(ResourceUsage.ramTotal).concat("GB"));
         disk.setFill(Color.BLACK);
         disk.setFont(Font.font("UNISPACE", 14));
         disk.setText("DISK USAGE:");
         diskValue.setFill(Color.BLACK);
         diskValue.setFont(Font.font("UNISPACE", 14));
-        diskValue.setText(diskUsage + "%");
+        diskValue.textProperty().bind(ResourceUsage.diskPercentage.concat("%"));
         ipValue.setFont(Font.font("UNISPACE", 12));
         ipValue.setText(ipValueString);
         status.setFill(Color.BLACK);
@@ -185,6 +185,20 @@ public class Panel_GUI extends Application {
         copyIP.prefHeightProperty().bind(copyIP.prefWidthProperty());
         copyView.fitWidthProperty().bind(copyIP.prefWidthProperty());
         copyView.fitHeightProperty().bind(copyIP.prefHeightProperty());
+        rectangle1.widthProperty().bind(scene.widthProperty().divide(2.782608695652174));
+        rectangle1.heightProperty().bind(scene.heightProperty());
+        rectangle2.widthProperty().bind(scene.widthProperty().divide(1.56734693877551));
+        rectangle2.heightProperty().bind(scene.heightProperty().divide(3));
+        rectangle3.widthProperty().bind(rectangle2.widthProperty());
+        rectangle3.heightProperty().bind(rectangle2.heightProperty());
+        rectangle4.widthProperty().bind(rectangle2.widthProperty());
+        rectangle4.heightProperty().bind(rectangle2.heightProperty());
+        ResourceUsage.areaChart_net.prefWidthProperty().bind(rectangle2.widthProperty());
+        ResourceUsage.areaChart_net.prefHeightProperty().bind(rectangle2.heightProperty());
+        ResourceUsage.areaChart_cpu.prefWidthProperty().bind(rectangle2.widthProperty());
+        ResourceUsage.areaChart_cpu.prefHeightProperty().bind(rectangle2.heightProperty());
+        ResourceUsage.areaChart_ram.prefWidthProperty().bind(rectangle2.widthProperty());
+        ResourceUsage.areaChart_ram.prefHeightProperty().bind(rectangle2.heightProperty());
 
 // Movable Location
         start.layoutXProperty().bind(scene.widthProperty().divide(1.33333333333333));
@@ -224,6 +238,20 @@ public class Panel_GUI extends Application {
         status.layoutYProperty().bind(disk.layoutYProperty().add(scene.heightProperty().divide(10.8)));
         statusValue.layoutXProperty().bind(status.layoutXProperty().add(statusWidth).add(2));
         statusValue.layoutYProperty().bind(status.layoutYProperty());
+        rectangle1.layoutXProperty().bind(scene.widthProperty().divide(768));
+        rectangle1.layoutYProperty().bind(scene.heightProperty().divide(1.002320185614849));
+        rectangle2.layoutXProperty().bind(scene.widthProperty().divide(2.772563176895307));
+        rectangle2.layoutYProperty().bind(rectangle1.layoutYProperty());
+        rectangle3.layoutXProperty().bind(rectangle2.layoutXProperty());
+        rectangle3.layoutYProperty().bind(rectangle2.layoutYProperty().add(rectangle2.heightProperty()));
+        rectangle4.layoutXProperty().bind(rectangle2.layoutXProperty());
+        rectangle4.layoutYProperty().bind(rectangle3.layoutYProperty().add(rectangle3.heightProperty()));
+        ResourceUsage.areaChart_net.layoutXProperty().bind(rectangle4.layoutXProperty());
+        ResourceUsage.areaChart_net.layoutYProperty().bind(rectangle4.layoutYProperty());
+        ResourceUsage.areaChart_cpu.layoutXProperty().bind(rectangle2.layoutXProperty());
+        ResourceUsage.areaChart_cpu.layoutYProperty().bind(rectangle2.layoutYProperty());
+        ResourceUsage.areaChart_ram.layoutXProperty().bind(rectangle3.layoutXProperty());
+        ResourceUsage.areaChart_ram.layoutYProperty().bind(rectangle3.layoutYProperty());
 
 // Font Size Bindings
         iconView.fitWidthProperty().addListener((obs, oldVal, newVal) -> { //iconView is 40px
@@ -252,7 +280,7 @@ public class Panel_GUI extends Application {
         primaryStage.setMinWidth(scene.getWidth());
         primaryStage.setMinHeight(scene.getHeight());
 
-// Action Events
+// Action Events (Temporary)
         start.setOnAction((ActionEvent event) -> {
             System.out.println(width/2 + " " + height/2);
         });
@@ -264,6 +292,8 @@ public class Panel_GUI extends Application {
         });
 
 // Misc
+        new ResourceUsage();
+        commandField.editableProperty().set(false);
         iconView.setPreserveRatio(true);
         iconView.setSmooth(true);
         iconView.setCache(true);
@@ -275,7 +305,7 @@ public class Panel_GUI extends Application {
         primaryStage.show();
         primaryStage.setTitle("MC Admin Panel");
         primaryStage.getIcons().add(icon);
-        pane.getChildren().addAll(start, stop, title, iconView, subTitle, fileManager, console, commandField, serverTitle,ip, ipValue, cpu, cpuValue, ram, ramValue, disk, diskValue, status, statusValue, copyIP);
+        pane.getChildren().addAll(start, stop, title, iconView, subTitle, fileManager, console, commandField, serverTitle,ip, ipValue, cpu, cpuValue, ram, ramValue, disk, diskValue, status, statusValue, copyIP, rectangle1, rectangle2, rectangle3, rectangle4, ResourceUsage.areaChart_net, ResourceUsage.areaChart_cpu, ResourceUsage.areaChart_ram);
         /*
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
         Parent fxmlRoot;
@@ -287,6 +317,10 @@ public class Panel_GUI extends Application {
         }
         pane.getChildren().add(fxmlRoot);
         */
+        primaryStage.setOnCloseRequest((event) -> {
+            ResourceUsage.stopUpdate();
+            System.exit(0);
+        });
     }
     public static void main(String[] args) {
         launch();

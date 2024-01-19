@@ -1,0 +1,33 @@
+.chart .sent .default-colour0 .chart-series-area-fill {
+    -fx-fill: rgba(0, 255, 0, 0.15); /* This changes the fill color */
+    -fx-opacity: 0.3;
+}
+.chart .sent .default-colour0 .chart-series-area-line {
+    -fx-stroke: green; /* This changes the line color */
+    -fx-stroke-width: 2px;
+}
+.chart .received .default-colour0 .chart-series-area-fill {
+    -fx-fill: rgba(0, 0, 255, 0.15); /* This changes the fill color */
+    -fx-opacity: 0.3;
+}
+.chart .received .default-colour0 .chart-series-area-line {
+    -fx-stroke: blue; /* This changes the line color */
+    -fx-stroke-width: 2px;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-legend {
+    -fx-background-color: transparent;
+}
+.chart-legend-item-symbol {
+    -fx-background-radius: 0;
+    -fx-padding: 5px;
+}
+.axis-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.axis-tick-label {
+    -fx-font-size: 12px;
+}

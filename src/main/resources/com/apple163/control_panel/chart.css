@@ -1,0 +1,42 @@
+.chart {
+    -fx-padding: 10px;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-series-line {
+    -fx-stroke: #2196f3;
+    -fx-stroke-width: 2px;
+}
+
+.chart-series-area-fill {
+    -fx-fill: #2196f3;
+    -fx-opacity: 0.3;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 0;
+    -fx-padding: 5px;
+}
+
+.axis-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.axis-tick-label {
+    -fx-font-size: 12px;
+}
+.chart .series0 .chart-series-area-fill {
+    -fx-fill: rgba(255, 0, 0, 0.15); /* This changes the fill color */
+}
+
+.chart .series0 .chart-series-area-line {
+    -fx-stroke: red; /* This changes the line color */
+}
