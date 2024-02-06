@@ -1,5 +1,8 @@
 package com.apple163.control_panel;
 
+import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.DoubleBinding;
 import javafx.event.ActionEvent;
@@ -19,21 +22,29 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 public class Panel_GUI extends Application {
     private final double width = Screen.getPrimary().getBounds().getWidth();
     private final double height = Screen.getPrimary().getBounds().getHeight();
     ScrollPane root = new ScrollPane();
     Pane pane = new Pane();
-    public String statusValueString = "Offline";
+    public static Button start = new Button();
+    public static Button stop = new Button();
     public String ipValueString;
-
-
+    public static Text statusValue = new Text();
+    public static boolean restart = false;
     @Override
     public void start(Stage primaryStage) {
         Image icon = new Image("logo.png");
-        Image copy = new Image("copy_icon.png");
+        ImageView tickView = new ImageView(new Image("check_icon.png"));
         ImageView iconView = new ImageView(icon);
-        ImageView copyView = new ImageView(copy);
+        ImageView copyView = new ImageView(new Image("copy_icon.png"));
         Text title = new Text();
         Text subTitle = new Text();
         Text serverTitle = new Text();
@@ -42,15 +53,24 @@ public class Panel_GUI extends Application {
         Text ram = new Text();
         Text disk = new Text();
         Text status = new Text();
+        Text extra1 = new Text();
+        Text extra2 = new Text();
+        Text extra3 = new Text();
+        Text extra4 = new Text();
+        Text extra5 = new Text();
+        Text extra6 = new Text();
+        Text cpuDets = new Text();
+        Text ramDets = new Text();
+        Text ramDets2 = new Text();
+        Text diskDets = new Text();
+        Text netSentDets = new Text();
+        Text netRecvDets = new Text();
         TextField commandField = new TextField();
         TextArea console = new TextArea();
         Text ipValue = new Text();
         Text cpuValue = new Text();
         Text ramValue = new Text();
         Text diskValue = new Text();
-        Text statusValue = new Text();
-        Button start = new Button();
-        Button stop = new Button();
         Button fileManager = new Button();
         Button copyIP = new Button();
         Scene scene = new Scene(root, width/2, height/2);
@@ -58,9 +78,10 @@ public class Panel_GUI extends Application {
         Rectangle rectangle2 = new Rectangle(0, 0, width, height);
         Rectangle rectangle3 = new Rectangle(0, 0, width, height);
         Rectangle rectangle4 = new Rectangle(0, 0, width, height);
+        Timeline timeline = new Timeline();
+        Timeline timeline2 = new Timeline();
         ResourceUsage.startUpdate();
-                                                                                            ipValueString = "192.168.1.1:25565"; //Placeholder
-                                                                                            statusValueString = "Offline"; //Placeholder
+        ipValueString = getSystemIP().concat(":25565");
 // Styling
         //SCENE WIDTH AND HEIGHT -> 768, 432
         buttonStyle(start);
@@ -70,8 +91,10 @@ public class Panel_GUI extends Application {
         fileManager.setFont(Font.font("UNISPACE", 15));
         start.setFont(Font.font("UNISPACE", 14));
         stop.setFont(Font.font("UNISPACE", 14));
-        start.setText("Restart");
-        stop.setText("Kill");
+        start.setText("Start");
+        stop.setText("Stop");
+        start.setDisable(false);
+        stop.setDisable(true);
         title.setFill(Color.BLACK);
         title.setFont(Font.font("UNISPACE", 20));
         title.setText("MC Admin Panel");
@@ -112,11 +135,11 @@ public class Panel_GUI extends Application {
         status.setFill(Color.BLACK);
         status.setFont(Font.font("UNISPACE", 14));
         status.setText("STATUS:");
-        statusValue.setFill(Color.BLACK);
         statusValue.setFont(Font.font("UNISPACE", 14));
-        statusValue.setText(statusValueString);
+        statusValue.setFill(Color.RED);
+        statusValue.setText("Offline");
 
-// Static Positioning
+// Static Positioning and Sizing
         subTitle.setLayoutX(14);
         iconView.setLayoutX(2);
         iconView.setLayoutY(2);
@@ -181,10 +204,12 @@ public class Panel_GUI extends Application {
         console.prefHeightProperty().bind(scene.heightProperty().divide(1.51048951048951));
         commandField.prefWidthProperty().bind(scene.widthProperty().divide(1.376344086021505));
         commandField.prefHeightProperty().bind(scene.heightProperty().divide(16.61538461538462));
-        copyIP.prefWidthProperty().bind(scene.widthProperty().divide(51.2));
+        copyIP.prefWidthProperty().bind(scene.widthProperty().divide(48));
         copyIP.prefHeightProperty().bind(copyIP.prefWidthProperty());
         copyView.fitWidthProperty().bind(copyIP.prefWidthProperty());
         copyView.fitHeightProperty().bind(copyIP.prefHeightProperty());
+        tickView.fitWidthProperty().bind(copyIP.prefWidthProperty());
+        tickView.fitHeightProperty().bind(copyIP.prefHeightProperty());
         rectangle1.widthProperty().bind(scene.widthProperty().divide(2.782608695652174));
         rectangle1.heightProperty().bind(scene.heightProperty());
         rectangle2.widthProperty().bind(scene.widthProperty().divide(1.56734693877551));
@@ -277,29 +302,91 @@ public class Panel_GUI extends Application {
         fileManager.widthProperty().addListener((obs, oldVal, newVal) -> fileManager.setFont(Font.font("UNISPACE", fileManager.widthProperty().divide(9).get())));
 
 // Min and Max Size
-        primaryStage.setMinWidth(scene.getWidth());
-        primaryStage.setMinHeight(scene.getHeight());
+        primaryStage.setMinWidth(width/2);
+        primaryStage.setMinHeight(height/2);
 
-// Action Events (Temporary)
+// Action Events
         start.setOnAction((ActionEvent event) -> {
-            System.out.println(width/2 + " " + height/2);
+            start.setDisable(true);
+            if (start.getText().equalsIgnoreCase("start")) {
+                if (Panel_GUI.restart) {
+                    Panel_GUI.restart = false;
+                }
+                else {
+                    console.clear();
+                }
+                stop.setText("Kill");
+                stop.setDisable(false);
+                statusValue.setText("Starting");
+                statusValue.setFill(Color.rgb(255, 165, 0));
+                new Thread(() -> new ServerInitialization(console, commandField)).start();
+            }
+            else if(start.getText().equalsIgnoreCase("restart")) {
+                restart = true;
+                commandField.clear();
+                commandField.setText("stop");
+                commandField.fireEvent(new ActionEvent());
+            }
         });
         stop.setOnAction((ActionEvent event) -> {
-            System.out.println(stop.getWidth() + " " + stop.getHeight());
+            stop.setDisable(true);
+            if (stop.getText().equalsIgnoreCase("kill")) {
+                try {
+                    Runtime.getRuntime().exec("taskkill /F /PID " + ServerInitialization.pid);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(0);
+            }
+            else if(stop.getText().equalsIgnoreCase("stop")) {
+                commandField.clear();
+                commandField.setText("stop");
+                commandField.fireEvent(new ActionEvent());
+            }
         });
+        //TODO: Add file manager functionality
         fileManager.setOnAction((ActionEvent event) -> {
             System.out.println(serverTitle.layoutYProperty());
+        });
+        copyIP.setOnAction((ActionEvent event) -> {
+            StringSelection stringSelection = new StringSelection(ipValue.getText());
+            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clpbrd.setContents(stringSelection, null);
+            timeline.getKeyFrames().add(new javafx.animation.KeyFrame(javafx.util.Duration.millis(100),
+                    new KeyValue(copyView.opacityProperty(), 0),
+                    new KeyValue(tickView.opacityProperty(), 1)
+            ));
+            PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
+            timeline.setOnFinished((javafx.event.ActionEvent event1) -> {
+                copyIP.setGraphic(tickView);
+                pause.play();
+            });
+            pause.setOnFinished((javafx.event.ActionEvent event2) -> {
+                timeline2.getKeyFrames().add(new javafx.animation.KeyFrame(javafx.util.Duration.millis(100),
+                        new KeyValue(copyView.opacityProperty(), 1),
+                        new KeyValue(tickView.opacityProperty(), 0)
+                ));
+                timeline2.play();
+            });
+            timeline2.setOnFinished((javafx.event.ActionEvent event3) -> {
+                copyIP.setGraphic(copyView);
+            });
+            timeline.play();
         });
 
 // Misc
         new ResourceUsage();
-        commandField.editableProperty().set(false);
+        console.editableProperty().set(false);
         iconView.setPreserveRatio(true);
         iconView.setSmooth(true);
         iconView.setCache(true);
         copyView.setPreserveRatio(true);
         copyView.setSmooth(true);
         copyView.setCache(true);
+        tickView.setPreserveRatio(true);
+        tickView.setSmooth(true);
+        tickView.setCache(true);
+        tickView.setOpacity(0);
         root.setContent(pane);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -338,5 +425,14 @@ public class Panel_GUI extends Application {
             button.setStyle("-fx-background-color: transparent; -fx-border-color: rgb(82, 183, 136); -fx-border-width: 2px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
         });
         button.setCursor(Cursor.HAND);
+    }
+    public String getSystemIP() {
+        try {
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            return inetAddress.getHostAddress();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return "Unknown Host";
+        }
     }
 }

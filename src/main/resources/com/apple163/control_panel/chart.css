@@ -1,3 +1,21 @@
+.default-color0.chart-series-area-line {
+    -fx-stroke: #2196f3;
+    -fx-stroke-width: 2px;
+}
+
+.default-color0.chart-series-area-fill {
+    -fx-fill: #2196f3;
+    -fx-opacity: 0.3;
+}
+.default-color1.chart-series-area-line {
+    -fx-stroke: white;
+    -fx-stroke-width: 2px;
+}
+
+.default-color1.chart-series-area-fill {
+    -fx-fill: white;
+    -fx-opacity: 0.3;
+}
 .chart {
     -fx-padding: 10px;
 }
@@ -6,15 +24,6 @@
     -fx-background-color: transparent;
 }
 
-.chart-series-line {
-    -fx-stroke: #2196f3;
-    -fx-stroke-width: 2px;
-}
-
-.chart-series-area-fill {
-    -fx-fill: #2196f3;
-    -fx-opacity: 0.3;
-}
 
 .chart-legend {
     -fx-background-color: transparent;
@@ -32,11 +41,4 @@
 
 .axis-tick-label {
     -fx-font-size: 12px;
-}
-.chart .series0 .chart-series-area-fill {
-    -fx-fill: rgba(255, 0, 0, 0.15); /* This changes the fill color */
-}
-
-.chart .series0 .chart-series-area-line {
-    -fx-stroke: red; /* This changes the line color */
 }

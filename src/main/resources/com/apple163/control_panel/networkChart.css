@@ -1,0 +1,18 @@
+.default-color0.chart-series-area-line {
+    -fx-stroke: lime;
+    -fx-stroke-width: 2px;
+}
+
+.default-color0.chart-series-area-fill {
+    -fx-fill: lime;
+    -fx-opacity: 0.3;
+}
+.default-color1.chart-series-area-line {
+    -fx-stroke: #ff4d00;
+    -fx-stroke-width: 2px;
+}
+
+.default-color1.chart-series-area-fill {
+    -fx-fill: #ff4d00;
+    -fx-opacity: 0.3;
+}

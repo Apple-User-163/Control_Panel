@@ -1,0 +1,8 @@
+1. Implement File-Manager
+2. Implement Ram Size Selector, Server File Location Selector
+3. Implement Console Logging System
+4. Implement Server Side
+5. Implement Login/Server Connection System
+6. Implement Colour Scheme
+7. Implement Additional Statistics (Uptime, CPU Usage, etc.)
+8. Implement Additional Settings (Server Name, etc.)

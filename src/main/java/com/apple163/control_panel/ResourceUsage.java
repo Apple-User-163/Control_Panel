@@ -98,7 +98,6 @@ public class ResourceUsage {
         double cpuLoad = processor.getSystemCpuLoadBetweenTicks(prevTicks);
         prevTicks = processor.getSystemCpuLoadTicks();
         cpuUsage.set(String.format("%.1f", cpuLoad * 100));
-        System.out.println("CPU Usage: " + cpuUsage.get() + "%");
     }
     private static void updateRAMUsage() {
         SystemInfo si = new SystemInfo();
@@ -109,7 +108,6 @@ public class ResourceUsage {
         long usedMemory = totalMemory - availableMemory;
         ramUsed.set(String.format("%.1f", bytesToGigabytes(usedMemory)));
         ramTotal.set(String.format("%.1f", bytesToGigabytes(totalMemory)));
-        System.out.println("RAM Usage: " + ramUsed.get() + "GB/" + ramTotal.get() + "GB");
     }
     private static void updateDiskUsage() {
         SystemInfo si = new SystemInfo();
@@ -164,8 +162,6 @@ public class ResourceUsage {
 
         networkSent.set(sentSpeedStr);
         networkReceived.set(receivedSpeedStr);
-
-        System.out.println("Network Usage: " + networkSent.get() + " " + networkReceived.get());
 
         prevBytesSent = bytesSent;
         prevBytesReceived = bytesReceived;
@@ -307,16 +303,11 @@ public class ResourceUsage {
         areaChart.setHorizontalGridLinesVisible(false);
         areaChart.setVerticalGridLinesVisible(false);
         areaChart.getData().add(series);
-        if (areaChart == areaChart_net && series == series_sent_net) {
-            series_sent_net.setName("sent");
-            areaChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/apple163/control_panel/net.css")).toExternalForm());
-        } else if (areaChart == areaChart_net && series == series_received_net) {
-            series_received_net.setName("received");
-            areaChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/apple163/control_panel/net.css")).toExternalForm());
+        areaChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/apple163/control_panel/chart.css")).toExternalForm());
+        if (areaChart.equals(areaChart_net)) {
+            areaChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/apple163/control_panel/networkChart.css")).toExternalForm());
         }
-        else{
-            areaChart.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/apple163/control_panel/chart.css")).toExternalForm());
-        }
+
         for (int i = 0; i <= 60; i++){
             series.getData().add(new XYChart.Data<>(i, 0));
         }
