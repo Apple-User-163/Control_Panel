@@ -32,15 +32,23 @@ import java.net.UnknownHostException;
 public class Panel_GUI extends Application {
     private final double width = Screen.getPrimary().getBounds().getWidth();
     private final double height = Screen.getPrimary().getBounds().getHeight();
-    ScrollPane root = new ScrollPane();
-    Pane pane = new Pane();
-    public static Button start = new Button();
-    public static Button stop = new Button();
+    ScrollPane root;
+    Pane pane;
+    public static Button start ;
+    public static Button stop;
     public String ipValueString;
-    public static Text statusValue = new Text();
+    public static Text statusValue;
     public static boolean restart = false;
+    public static void main(String[] args) {
+        launch();
+    }
     @Override
     public void start(Stage primaryStage) {
+        root = new ScrollPane();
+        pane = new Pane();
+        start = new Button();
+        stop = new Button();
+        statusValue = new Text();
         Image icon = new Image("logo.png");
         ImageView tickView = new ImageView(new Image("check_icon.png"));
         ImageView iconView = new ImageView(icon);
@@ -408,9 +416,6 @@ public class Panel_GUI extends Application {
             ResourceUsage.stopUpdate();
             System.exit(0);
         });
-    }
-    public static void main(String[] args) {
-        launch();
     }
     public void buttonStyle(Button button) {
         button.setAlignment(javafx.geometry.Pos.CENTER);
